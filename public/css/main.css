@@ -1,0 +1,27 @@
+.readonly {
+    font-style: italic;
+    color: gray;
+  }
+
+  .ui.card{
+
+    width: 590px;
+  }
+  .list-container {
+    border: 1px solid #ccc;
+    width: max-content;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .fit {
+    width:fit-content;
+  }
+
+  .containeredit {
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  

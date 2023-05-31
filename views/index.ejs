@@ -1,0 +1,157 @@
+<%- include('./partials/header.ejs') -%>
+
+<div id="app" class="container-fluid px-0">
+  <section class="eggorderform bg-dark pb-4 text-light">
+  <h1 class="mb-4 text-center">Egg Order Form</h1>
+  <div class="ui stackable grid">
+    <div class="sixteen wide mobile twelve wide tablet ten wide computer column d-flex justify-content-center">
+      
+      <div class="ui card ">
+        <div class="content">
+          <div class="header">Create Order</div>
+          <form class="ui form custom-form" @submit="submitForm()">
+            <div class="fields justify-content-around">
+              <div class="six wide field">
+                <label for="name">Name:</label>
+                <input type="text" id="name" v-model="name" required>
+              </div>
+              <div class="six wide field">
+                <label for="dept">Department:</label>
+                <input type="text" id="dept" v-model="dept" required>
+              </div>
+            </div>
+            <div class="fields justify-content-around">
+              <div class="six wide field">
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" v-model="quantity" required>
+              </div>
+              <div class="six wide field">
+                <label for="trayType">Tray Type:</label>
+                <select id="trayType" v-model="trayType" @change="updatePrice">
+                  <option v-for="tray in trays" :value="tray.id">{{ tray.type }}</option>
+                </select>
+                <a class="ui primary " @click="editEggtray" >Edit</a>
+              </div>
+            </div>
+
+            <div class="fields justify-content-center">
+              <div class="six wide field">
+                <label for="price">Price:</label>
+                <input type="text" id="price" v-model="price" readonly class="border-none">
+              </div>
+
+            <div class="d-flex justify-content-spacebetween align-items-center">
+              <div class="field px-5">
+                <div class="ui checkbox">
+                  <input type="checkbox" id="delivered" v-model="delivered">
+                  <label for="delivered">Delivered</label>
+                </div>
+              </div>
+              <div class="field px-5 ">
+                <div class="ui checkbox">
+                  <input type="checkbox" id="paid" v-model="paid">
+                  <label for="paid">Paid</label>
+                </div>
+              </div>
+              </div>  
+            </div>
+          </div>
+          <div class="fields justify-content-center d-flex pb-4">
+            <button type="submit" class="ui primary button big" @click="submitForm">Submit</button>
+          </div>
+           
+          </form>
+        </div>
+      </div>
+    
+
+      <div class="sixteen wide mobile eight wide tablet four wide computer column">
+        <div class="ui card">
+          <div class="tab-content">
+            <div class="header">Order Summary</div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Amount owing</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(order, index) in calculateAmountOwing" :key="order.name" :class="{'bg-dark': index % 2 === 0, 'text-light': index % 2 === 0}">
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ order.name }}</td>
+                  <td>{{ formatPrice(order.amountOwing) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+</section>
+
+<Section class="allorders mx-4 mb-5">
+  <div class="headinga px-5 text-center mt-4 ">
+  <h1>All Orders</h1>
+  <div class="mb-3">
+    <div class="ui form text-center d-flex justify-content-center">
+      <div class=" fields">
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" id="all" name="filter" value="all" v-model="filter">
+            <label for="all">All</label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" id="pending_payment" name="filter" value="pending_payment" v-model="filter">
+            <label for="pending_payment">Pending Payment</label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" id="pending_delivery" name="filter" value="pending_delivery" v-model="filter">
+            <label for="pending_delivery">Pending Delivery</label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" id="delivered_paid" name="filter" value="delivered_paid" v-model="filter">
+            <label for="delivered_paid">Delivered & Paid</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+  <p>Number of Results: {{ filteredOrders.length }}</p>
+
+  <div class="ui three stackable cards">
+    <div class="card" v-for="order in filteredOrders" :key="order.id">
+      <div class="content">
+        <div class="header">{{ order.name }}</div>
+        <div class="meta">Department: {{ order.dept }}</div>
+        <div class="description">
+          <p>Quantity: {{ order.quantity }}</p>
+          <p>Price: {{ formatPrice(order.price) }}</p>
+          <p>Total: {{ formatPrice(order.total) }}</p>
+          <p>Payment Date: {{ order.paid ? formatDate(order.paidAt) : 'Not paid' }}</p>
+          <p>Delivery Date: {{ order.delivered ? formatDate(order.deliveredAt) : 'Not delivered' }}</p>
+        </div>
+      </div>
+      <div class="extra content">
+        <div class="ui two buttons">
+          <button class="ui primary button" @click="editOrder(order.id)">Edit</button>
+          <button class="ui negative button" @click="showDeleteConfirmation(order)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</div>
+</Section>
+
+<script type="module" src="/js/app.js"></script>
+
+<%- include('./partials/footer.ejs') -%>
