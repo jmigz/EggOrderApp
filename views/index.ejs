@@ -1,12 +1,12 @@
 <%- include('./partials/header.ejs') -%>
 
-<div id="app" class="container-fluid px-0">
-  <section class="eggorderform bg-dark pb-4 text-light">
+<div id="app" class="container-fluid px-0 mb-5 pb-5  ">
+  <section class="eggorderform bg-dark pb-4 text-light ">
   <h1 class="mb-4 text-center">Egg Order Form</h1>
-  <div class="ui stackable grid">
-    <div class="sixteen wide mobile twelve wide tablet ten wide computer column d-flex justify-content-center">
+  <div class="ui stackable grid center aligned ">
+    <div class="sixteen wide mobile twelve wide tablet five wide computer  center aligned column">
       
-      <div class="ui card ">
+      <div class="card center px-3 ">
         <div class="content">
           <div class="header">Create Order</div>
           <form class="ui form custom-form" @submit="submitForm()">
@@ -41,7 +41,7 @@
               </div>
 
             <div class="d-flex justify-content-spacebetween align-items-center">
-              <div class="field px-5">
+              <div class="field px-5 py-3">
                 <div class="ui checkbox">
                   <input type="checkbox" id="delivered" v-model="delivered">
                   <label for="delivered">Delivered</label>
@@ -56,7 +56,7 @@
               </div>  
             </div>
           </div>
-          <div class="fields justify-content-center d-flex pb-4">
+          <div class="fields justify-content-center d-flex py-4">
             <button type="submit" class="ui primary button big" @click="submitForm">Submit</button>
           </div>
            
@@ -65,29 +65,81 @@
       </div>
     
 
-      <div class="sixteen wide mobile eight wide tablet four wide computer column">
-        <div class="ui card">
-          <div class="tab-content">
-            <div class="header">Order Summary</div>
+      <div class="sixteen wide mobile eight wide tablet five wide computer center aligned column">
+        <div class="ui card px-3">
+          <div class="tab-content"> 
+            <div id="colhead" class="ui header blue pt-3 ">Collection Summary</div>
+            <div class="ui divider"></div>
             <table class="table">
               <thead>
                 <tr>
                   <th>#</th>
                   <th>Name</th>
+                  <th>Total Order</th>
                   <th>Amount owing</th>
+                  <th>Action</th> 
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(order, index) in calculateAmountOwing" :key="order.name" :class="{'bg-dark': index % 2 === 0, 'text-light': index % 2 === 0}">
                   <td>{{ index + 1 }}</td>
                   <td>{{ order.name }}</td>
+                  <td>{{ formatPrice(order.orderTotal) }}</td>
                   <td>{{ formatPrice(order.amountOwing) }}</td>
+                  <td>
+                    <!-- <button class="ui button primary tiny " @click="openPaymentDialog(order)"></button> -->
+                    <div class="ui animated primary tiny button" tabindex="0" @click="openPaymentDialog(order)">
+                      <div class="visible content">Pay</div>
+                      <div class="hidden content">
+                        <i class="right arrow icon"></i>
+                      </div>
+                    </div>
+                    
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
+
+      <div class="sixteen wide mobile eight wide tablet five wide computer center aligned column">
+        <div class="ui card px-3 ">
+          <div class="tab-content"> 
+            <div id="colhead" class="ui header blue pt-3 ">Pending Delivery</div>
+            <div class="ui divider"></div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Total Order</th>
+                  <th>Action</th> 
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(order, index) in pendingDelivery" :key="order.name" :class="{'bg-dark': index % 2 === 0, 'text-light': index % 2 === 0}">
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ order.name }}</td>
+                  <td>{{ formatPrice(order.orderTotal) }}</td>
+                  
+                  <td>
+                    <!-- <button class="ui button primary tiny " @click="openPaymentDialog(order)"></button> -->
+                    <div class="ui animated primary tiny button" tabindex="0" @click="openDeliver(order)">
+                      <div class="visible content">Deliver</div>
+                      <div class="hidden content">
+                        <i class="right arrow icon"></i>
+                      </div>
+                    </div>
+                    
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
 </section>
 
 <Section class="allorders mx-4 mb-5">
@@ -142,15 +194,39 @@
       </div>
       <div class="extra content">
         <div class="ui two buttons">
-          <button class="ui primary button" @click="editOrder(order.id)">Edit</button>
-          <button class="ui negative button" @click="showDeleteConfirmation(order)">Delete</button>
+          <button class="ui primary button   rounded" @click="editOrder(order.id)">Edit</button>
+          <button class="ui negative button  rounded " @click="showDeleteConfirmation(order)">Delete</button>
         </div>
       </div>
     </div>
   </div>
+</section>
+
+<section class="addpayment ui stackable grid center aligned  ":class="{ 'd-none': !showPaymentDialog }">
+  <div v-if="showPaymentDialog " class="five wide payment-dialog">
+    <div class="five wide" :style="{ display: showPaymentDialog ? 'block' : 'none' }" @close="showPaymentDialog = false">
+      <h3>Receive Payment</h3>
+      <form class="ui form" @submit.prevent="submitPayment">
+        <div class="field">
+          <label for="amountPaid">Amount Paid:</label>
+          <input type="number" id="amountPaid" v-model="amountPaid" min="0" :max="orderTotal" step="1" required>
+          <p v-if="amountPaid > orderTotal" class="error">Amount paid cannot exceed the order total.</p>
+        </div>
+        <div class="actions">
+          <button class="ui primary button" type="submit">Submit</button>
+          <button class="ui button" type="button" @click="showPaymentDialog = false">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+
   
 </div>
-</Section>
+
+
+
 
 <script type="module" src="/js/app.js"></script>
 

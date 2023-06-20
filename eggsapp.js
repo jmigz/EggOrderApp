@@ -78,6 +78,7 @@ app.put('/edit/:orderId', async (req, res) => {
   try {
     const orderId = req.params.orderId;
     const { name, dept, quantity, price, delivered, paid } = req.body;
+    console.log(req.body);
     const order = await Order.findByPk(orderId);
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
@@ -90,34 +91,36 @@ app.put('/edit/:orderId', async (req, res) => {
     order.price = price;
 
     // Update delivered status and date
-    if (order.delivered !== delivered) {
-      order.delivered = delivered;
-      if (delivered) {
-        order.deliveredAt = order.deliveredAt || new Date();
-      } else {
-        order.deliveredAt = null;
-      }
+    if (delivered === 'true') {
+      order.delivered = true;
+      order.deliveredAt = new Date();
+    } else {
+      order.delivered = false;
+      order.deliveredAt = null;
     }
 
     // Update paid status and date
-    if (order.paid !== paid) {
-      order.paid = paid;
-      if (paid) {
-        order.paidAt = order.paidAt || new Date();
-      } else {
-        order.paidAt = null;
-      }
+    if (paid === 'true') {
+      order.paid = true;
+      order.paidAt = new Date();
+    } else {
+      order.paid = false;
+      order.paidAt = null;
     }
+
     // Recalculate the total
     order.total = parseFloat(quantity) * parseFloat(price);
 
-
-    await order.save();
+    await order.save(); // Update the order in the database
     res.redirect('/');
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+
+
 
 app.put('/eggtrays/edit/:id', async (req, res) => {
   try {
@@ -193,10 +196,53 @@ app.post('/eggtrays/add', async (req, res) => {
 });
 
 
+app.put('/pay', async (req, res) => {
+  
+  
+  try {
+    const order = req.body.order;
+    const orderId = order.id;
+    const updatedOrder = await Order.findByPk(orderId);
+    console.log("Let's pay");
+    console.log("This should be from req order",order.amountOwing);
+    console.log("This should be from updated order",updatedOrder.amountOwing);
+    // Update the order in the database
+    // const updatedOrder = await Order.findByPk(order.id);
+    if (!updatedOrder) {
+      console.log("We cant pay if we dont have the correct orderId");
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    // Apply the updates to the order
+    updatedOrder.balance = order.amountOwing;
+    
+    updatedOrder.paid = order.paid;
+    if (order.paid) {
+      updatedOrder.paidAt = new Date();
+    }
+
+    // Save the updated order
+    await updatedOrder.save();
+    console.log("this should be after save  : ", updatedOrder.amountOwing)
+    res.status(200).json({ message: 'Order updated successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+
+
+
+
+
 app.post('/create', async (req, res) => {
   try {
     const { name, dept, quantity, price, delivered, paid } = req.body;
     const total = parseFloat(quantity) * parseFloat(price);
+    const balance = parseFloat(quantity) * parseFloat(price);
     const order = await Order.create({
       name,
       dept,

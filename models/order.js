@@ -15,9 +15,11 @@ module.exports = (sequelize, DataTypes) => {
       name: DataTypes.STRING,
       dept: DataTypes.STRING,
       quantity: DataTypes.INTEGER,
-      trayType: DataTypes.INTEGER, // Include the trayType field in the Order model
+      trayType: DataTypes.INTEGER,
       price: DataTypes.DECIMAL,
       total: DataTypes.DECIMAL,
+      balance: DataTypes.DECIMAL,
+        
       delivered: DataTypes.BOOLEAN,
       paid: DataTypes.BOOLEAN,
       createdAt: {

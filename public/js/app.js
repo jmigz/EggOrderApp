@@ -9,11 +9,15 @@ const app = Vue.createApp({
       delivered: false,
       paid: false,
       trays: [],
+      filter: 'pending_payment',
       orders: [],
       filter: 'all',
+      showPaymentDialog: false,
+      amountPaid: 0, 
       order: {
         delivered: false,
         paid: false,
+        
       },
     };
   },
@@ -21,7 +25,7 @@ const app = Vue.createApp({
     filteredOrders() {
       switch (this.filter) {
         case 'pending_payment':
-          return this.orders.filter((order) => !order.paid);
+          return this.orders.filter((order) => order.delivered && !order.paid);
         case 'pending_delivery':
           return this.orders.filter((order) => !order.delivered);
         case 'delivered_paid':
@@ -31,19 +35,46 @@ const app = Vue.createApp({
       }
     },
     calculateAmountOwing() {
-      return this.filteredOrders
-        .filter((order) => !order.paid)
-        .map((order) => ({
-          name: order.name,
-          amountOwing: order.quantity * order.price,
-        }));
+      const filteredOrders = this.orders.filter((order) => order.delivered && !order.paid);
+      
+      return filteredOrders.map((order) => ({
+        id : order.id,
+        name: order.name,
+        amountOwing: order.balance,
+        orderTotal: order.total,
+
+      }));
     },
+    pendingDelivery() {
+      const filteredOrders = this.orders.filter((order) => !order.delivered);
+      
+      return filteredOrders.map((order) => ({
+        id : order.id,
+        name: order.name,
+        orderTotal: order.total,
+
+      }));
+    },
+
+
   },
   mounted() {
     this.fetchOrders();
     this.fetchTrays();
+    this.filter = 'pending_payment';
   },
   methods: {
+    
+    openPaymentDialog(order) {
+     
+      this.order = order;
+    
+      this.showPaymentDialog = true;
+      
+    },
+    
+    
+
     formatPrice(price) {
       const numericPrice = parseFloat(price);
       if (isNaN(numericPrice)) {
@@ -171,6 +202,38 @@ const app = Vue.createApp({
           console.error(error);
         });
     },
+    submitPayment() {
+      console.log("Before:", this.order.amountOwing);
+      this.order.amountOwing -= this.amountPaid;
+      console.log("After:", this.order.amountOwing);
+    
+      // Update the paid status if the amount owing is 0 or less
+      if (this.order.amountOwing <= 0) {
+        this.order.paid = true;
+      }
+    
+      // Send a POST request to update the order in the database
+      console.log(this.order);
+      axios
+        .put(`/pay`, { order: this.order }) // Send the order object in the request body
+        .then(response => {
+        console.log('Order updated successfully.');
+        })
+          .catch(error => {
+            console.error('Error updating order:', error);
+      });
+
+    
+      this.showPaymentDialog = false; // Close the payment dialogue
+    }
+    
+    
+    
+    
+    
+  
+
+ 
   },
 });
 
