@@ -1,6 +1,7 @@
 const app = Vue.createApp({
   data() {
     return {
+      showSection: false,
       name: '',
       dept: '',
       trayType: '',
@@ -22,7 +23,7 @@ const app = Vue.createApp({
     };
   },
   computed: {
-    filteredOrders() {
+    getFilteredOrders() {
       switch (this.filter) {
         case 'pending_payment':
           return this.orders.filter((order) => order.delivered && !order.paid);
@@ -35,25 +36,21 @@ const app = Vue.createApp({
       }
     },
     calculateAmountOwing() {
-      const filteredOrders = this.orders.filter((order) => order.delivered && !order.paid);
-      
-      return filteredOrders.map((order) => ({
-        id : order.id,
-        name: order.name,
-        amountOwing: order.balance,
-        orderTotal: order.total,
-
-      }));
+      return this.orders.filter((order) => order.delivered && !order.paid)
+        .map((order) => ({
+          id: order.id,
+          name: order.name,
+          amountOwing: order.balance,
+          orderTotal: order.total,
+        }));
     },
-    pendingDelivery() {
-      const filteredOrders = this.orders.filter((order) => !order.delivered);
-      
-      return filteredOrders.map((order) => ({
-        id : order.id,
-        name: order.name,
-        orderTotal: order.total,
-
-      }));
+    getPendingDelivery() {
+      return this.orders.filter((order) => !order.delivered)
+        .map((order) => ({
+          id: order.id,
+          name: order.name,
+          orderTotal: order.total,
+        }));
     },
 
 
@@ -167,7 +164,7 @@ const app = Vue.createApp({
     },
     submitForm() {
       // Create a new order object with the form data
-      
+      this.showSection=false;
       const order = {
         name: this.name,
         dept: this.dept,
@@ -178,16 +175,11 @@ const app = Vue.createApp({
         paid: this.paid,
         
       };
-      // console.log('Current date:', new Date()); // Add this line to log the current date
-
-      
+       
       // Send a POST request to the server to add the order
       axios
         .post('/create', order)
         .then((response) => {
-          // Add the new order to the orders list
-          // this.orders.push(response.data);
-
           // Reset the form inputs
           this.name = '';
           this.dept = '';
@@ -196,17 +188,17 @@ const app = Vue.createApp({
           this.price = 0;
           this.delivered = false;
           this.paid = false;
-          window.location.reload();
+          this.fetchOrders();
+          this.filteredOrders = this.getFilteredOrders;
+        this.amountOwing = this.calculateAmountOwing;
+        this.pendingDeliveryOrders = this.getPendingDeliveryOrders;
         })
         .catch((error) => {
           console.error(error);
         });
     },
     submitPayment() {
-      console.log("Before:", this.order.amountOwing);
       this.order.amountOwing -= this.amountPaid;
-      console.log("After:", this.order.amountOwing);
-    
       // Update the paid status if the amount owing is 0 or less
       if (this.order.amountOwing <= 0) {
         this.order.paid = true;
@@ -225,15 +217,31 @@ const app = Vue.createApp({
 
     
       this.showPaymentDialog = false; // Close the payment dialogue
-    }
+    },
     
-    
-    
-    
-    
-  
+    showDeliverConfirmation(order) {
+      if (confirm(`This will mark the order "${order.name}" as delivered. Are you sure?`)) {
+        this.markAsDelivered(order);
+      }
+    },
 
- 
+    async markAsDelivered(order) {
+      try {
+        const response = await axios.put('/orders/deliver', {
+          orderId: order.id,
+          deliveredAt: new Date()
+                  });
+        
+        this.fetchOrders();
+        this.filteredOrders = this.getFilteredOrders;
+        this.amountOwing = this.calculateAmountOwing;
+        this.pendingDeliveryOrders = this.getPendingDeliveryOrders;
+        console.log('Order marked as delivered successfully.');
+      } catch (error) {
+        console.error('Error marking order as delivered:', error);
+      }
+    }
+  
   },
 });
 

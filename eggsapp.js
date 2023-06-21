@@ -119,6 +119,30 @@ app.put('/edit/:orderId', async (req, res) => {
 });
 
 
+app.put('/orders/deliver', (req, res) => {
+  
+  const { orderId, deliveredAt } = req.body;
+  // Find the order by orderId
+  Order.findByPk(orderId)
+    .then((order) => {
+      if (order) {
+        order.delivered = true;
+        order.deliveredAt = deliveredAt;
+        return order.save();
+      } else {
+        throw new Error('Order not found.');
+      }
+    })
+    .then(() => {
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      console.error('Error marking order as delivered:', error);
+      res.sendStatus(500);
+    });
+});
+
+
 
 
 

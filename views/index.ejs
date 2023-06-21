@@ -2,13 +2,21 @@
 
 <div id="app" class="container-fluid px-0 mb-5 pb-5  ">
   <section class="eggorderform bg-dark pb-4 text-light ">
-  <h1 class="mb-4 text-center">Egg Order Form</h1>
-  <div class="ui stackable grid center aligned ">
-    <div class="sixteen wide mobile twelve wide tablet five wide computer  center aligned column">
-      
-      <div class="card center px-3 ">
-        <div class="content">
-          <div class="header">Create Order</div>
+   
+  
+  <div class="ui stackable grid center aligned pt-4">
+    <div v-if="!showSection" class=" center px-3">
+      <div class="content ">
+        <button class="ui green button" @click="showSection = true">New Order</button>
+      </div>
+    </div>
+    <div class="sixteen wide mobile twelve wide tablet five wide computer center aligned column">
+      <div v-if="showSection" class="card center px-3">
+        <div class="content pt-2">
+          <button class="circular ui icon basic teal button" @click="showSection = false">
+                <i class="icon angle up"></i>
+            </button>
+          <div class="header ui blue mt-1">Create Order</div>
           <form class="ui form custom-form" @submit="submitForm()">
             <div class="fields justify-content-around">
               <div class="six wide field">
@@ -118,14 +126,14 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(order, index) in pendingDelivery" :key="order.name" :class="{'bg-dark': index % 2 === 0, 'text-light': index % 2 === 0}">
+                <tr v-for="(order, index) in getPendingDelivery" :key="order.name" :class="{'bg-dark': index % 2 === 0, 'text-light': index % 2 === 0}">
                   <td>{{ index + 1 }}</td>
                   <td>{{ order.name }}</td>
                   <td>{{ formatPrice(order.orderTotal) }}</td>
                   
                   <td>
                     <!-- <button class="ui button primary tiny " @click="openPaymentDialog(order)"></button> -->
-                    <div class="ui animated primary tiny button" tabindex="0" @click="openDeliver(order)">
+                    <div class="ui animated primary tiny button" tabindex="0" @click="showDeliverConfirmation(order)">
                       <div class="visible content">Deliver</div>
                       <div class="hidden content">
                         <i class="right arrow icon"></i>
@@ -177,10 +185,10 @@
     
   </div>
 </div>
-  <p>Number of Results: {{ filteredOrders.length }}</p>
+  <p>Number of Results: {{ getFilteredOrders.length }}</p>
 
   <div class="ui three stackable cards">
-    <div class="card" v-for="order in filteredOrders" :key="order.id">
+    <div class="card" v-for="order in getFilteredOrders" :key="order.id">
       <div class="content">
         <div class="header">{{ order.name }}</div>
         <div class="meta">Department: {{ order.dept }}</div>
