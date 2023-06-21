@@ -62,6 +62,22 @@ Please note that you should replace your-username with your actual GitHub userna
 
 ## Additional Updates
 
+## Updated the Vue app's code:
+
+* Added a showPaymentDialog property to control the visibility of the payment dialog.
+* Created a method named openPaymentDialog to handle opening the payment dialog and setting the selected order.
+* Created a method named submitPayment to handle the payment submission.
+* Created the markAsDelivered method to update the paid status of the order and trigger the payment dialog .
+* Added logic to update the amountOwing and paid status based on the payment amount in the submitPayment method.
+* Updated the submitForm method to reset the form inputs and reload the page after submitting an order.
+
+## Modified the HTML code:
+
+* Added a payment dialog section with inputs for the payment amount.
+* Conditionally rendered the payment dialog using the v-if directive based on the showPaymentDialog flag.
+* Added a button to open the payment dialog for a selected order.
+* Added a button to submit the payment in the payment dialog.
+
 * Introduced Vue.js framework for the front-end to enhance interactivity.
 * Utilized Axios library for making asynchronous HTTP requests.
 * Implemented reactivity using Vue.js to update the view after performing operations such as adding and deleting egg trays.
