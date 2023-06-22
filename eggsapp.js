@@ -158,12 +158,13 @@ app.put('/eggtrays/edit/:id', async (req, res) => {
     eggTray.type = type;
     eggTray.price = price;
     await eggTray.save();
-    res.redirect('/edit-eggtray');
+    res.status(200).json({ message: 'Egg tray updated successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
   }
 });
+
 
 
 app.get('/edit-eggtray', async (req, res) => {

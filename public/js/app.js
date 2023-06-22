@@ -85,9 +85,11 @@ const app = Vue.createApp({
     editEggtray() {
       window.location.href = '/edit-eggtray';
     },
-    trayedit(eggTrayId) {
-      window.location.href = '/trayedit/' + eggTrayId;
-    },
+    
+
+    
+  
+  
     
     
     showDeleteConfirmation(order) {
@@ -217,6 +219,12 @@ const app = Vue.createApp({
 
     
       this.showPaymentDialog = false; // Close the payment dialogue
+      
+      this.filteredOrders = this.getFilteredOrders;
+      this.amountOwing = this.calculateAmountOwing;
+      this.pendingDeliveryOrders = this.getPendingDeliveryOrders;
+      this.fetchOrders();
+
     },
     
     showDeliverConfirmation(order) {

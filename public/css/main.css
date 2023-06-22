@@ -47,5 +47,17 @@
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 9;
   }
+  .rounded-row td:first-child{
+    -moz-border-radius:10px 0 0 10px;
+    -webkit-border-radius:10px 0 0 10px;
+}
+.rounded-row td:last-child{
+    -moz-border-radius:0 10px 10px 0;
+    -webkit-border-radius:0 10px 10px 0;
+}
+
+.table>:not(caption)>*>* {
+      border-bottom-width: 0px;
+}
   
   

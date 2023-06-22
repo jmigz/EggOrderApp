@@ -89,7 +89,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(order, index) in calculateAmountOwing" :key="order.name" :class="{'bg-dark': index % 2 === 0, 'text-light': index % 2 === 0}">
+                <tr v-for="(order, index) in calculateAmountOwing" :key="order.name" :class="{'bg-dark': index % 2 === 0, 'text-light': index % 2 === 0, 'rounded-row': true}">
                   <td>{{ index + 1 }}</td>
                   <td>{{ order.name }}</td>
                   <td>{{ formatPrice(order.orderTotal) }}</td>
@@ -126,7 +126,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(order, index) in getPendingDelivery" :key="order.name" :class="{'bg-dark': index % 2 === 0, 'text-light': index % 2 === 0}">
+                <tr v-for="(order, index) in getPendingDelivery" :key="order.name" :class="{'bg-dark': index % 2 === 0, 'text-light': index % 2 === 0, 'rounded-row': true}">
                   <td>{{ index + 1 }}</td>
                   <td>{{ order.name }}</td>
                   <td>{{ formatPrice(order.orderTotal) }}</td>
@@ -211,19 +211,26 @@
 </section>
 
 <section class="addpayment ui stackable grid center aligned  ":class="{ 'd-none': !showPaymentDialog }">
-  <div v-if="showPaymentDialog " class="five wide payment-dialog">
-    <div class="five wide" :style="{ display: showPaymentDialog ? 'block' : 'none' }" @close="showPaymentDialog = false">
+  <div v-if="showPaymentDialog " class="six wide payment-dialog">
+    <div class="container-fluid" :style="{ display: showPaymentDialog ? 'block' : 'none' }" @close="showPaymentDialog = false">
       <h3>Receive Payment</h3>
       <form class="ui form" @submit.prevent="submitPayment">
         <div class="field">
           <label for="amountPaid">Amount Paid:</label>
-          <input type="number" id="amountPaid" v-model="amountPaid" min="0" :max="orderTotal" step="1" required>
+          <input type="number" id="amountPaid" v-model="amountPaid" min="-100" :max="orderTotal" step="1" required>
           <p v-if="amountPaid > orderTotal" class="error">Amount paid cannot exceed the order total.</p>
         </div>
-        <div class="actions">
-          <button class="ui primary button" type="submit">Submit</button>
-          <button class="ui button" type="button" @click="showPaymentDialog = false">Cancel</button>
+        <div class="ui center aligned padded grid ">
+          <div class="row">
+            <div class="column">
+              <div class="actions d- flex">
+                <button class="ui primary button six wide" type="submit">Submit</button>
+                <button class="ui button" type="button six wide" @click="showPaymentDialog = false">Cancel</button>
+              </div>
+            </div>
+          </div>
         </div>
+        
       </form>
     </div>
   </div>

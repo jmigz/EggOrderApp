@@ -2,60 +2,92 @@
 
 <div id="trayapp" class="container d-flex flex-column mt-5">
 
-
-<div class="row d-flex justify-content-center pt-3 align-items-center pb-5">
-  <div class="col-md-3 ">
- <!-- Add New Egg Tray Form -->
-<form class="ui form " @submit.prevent="addEggTray">
-  
-  <div class="card mb-4 shadow shadow-color-black shadow-spread-10">
-    <div class="card-body">
-      <form class="form" @submit.prevent="addEggTray">
-        <h2 class="card-title ">Add New Egg Tray</h2>
-        <div class="form-group">
-          <label for="newType">Type:</label>
-          <input type="text" id="newType" name="newType" v-model="newEggTrayType" required>
-        </div>
-        <div class="form-group">
-          <label for="newPrice">Price:</label>
-          <input type="number" id="newPrice" name="newPrice" step="0.01" v-model="newEggTrayPrice" required>
-        </div>
-        <div class="d-flex justify-content-center align-items-center pt-3">
-          <button type="submit" class="btn btn-primary">Add</button>
+  <!-- Add New Egg Tray Form -->
+  <div class="row d-flex justify-content-center pt-3 align-items-center pb-5">
+    <div class="col-md-3">
+      <form class="ui form" @submit.prevent="addEggTray">
+        <!-- Add New Egg Tray form content -->
+        <div class="card mb-4 shadow shadow-color-black shadow-spread-10">
+          <div class="card-body">
+            <h2 class="card-title">Add New Egg Tray</h2>
+            <div class="form-group">
+              <label for="newType">Type:</label>
+              <input type="text" id="newType" name="newType" v-model="newEggTrayType" required>
+            </div>
+            <div class="form-group">
+              <label for="newPrice">Price:</label>
+              <input type="number" id="newPrice" name="newPrice" step="0.01" v-model="newEggTrayPrice" required>
+            </div>
+            <div class="d-flex justify-content-center align-items-center pt-3">
+              <button type="submit" class="btn btn-primary">Add</button>
+            </div>
+          </div>
         </div>
       </form>
     </div>
   </div>
-</form>
-</div>
-</div>
 
-<!-- Existing Egg Trays -->
-<div class="row d-flex justify-content-center">
-  <div class="col-md-2" v-for="eggTray in existingEggtrays" :key="eggTray.id">
-    <div class="card mb-4 shadow shadow-color-black shadow-spread-10">
-      <div class="card-body">
-        <h5 class="card-title">{{ eggTray.type }}</h5>
-        <p class="card-text">Price: {{ formatPrice(eggTray.price) }}</p>
+  <!-- Existing Egg Trays -->
+  <div class="row d-flex justify-content-center pb-5">
+    <div class="col-md-2" v-for="eggTray in existingEggtrays" :key="eggTray.id">
+      <div class="card mb-4 shadow shadow-color-black shadow-spread-10">
+        <div class="card-body">
+          <h5 class="card-title">{{ eggTray.type }}</h5>
+          <p class="card-text">Price: {{ formatPrice(eggTray.price) }}</p>
 
-        <div class="row d-flex">
-          <div class="col-12 d-flex justify-content-between">
-            <a class="ui btn-primary btn" :href="'/trayedit/' + eggTray.id">Edit</a>
-            <button class="btn btn-danger" :data-eggtray-id="eggTray.id" @click="showDeleteConfirmation">Delete</button>
-          
+          <div class="row d-flex">
+            <div class="col-12 d-flex justify-content-between">
+              <button class="ui btn-primary btn" data-bs-toggle="modal" data-bs-target="#TrayModal" @click="openEditModal(eggTray)">Edit</button>
+              <button class="btn btn-danger" :data-eggtray-id="eggTray.id" @click="showDeleteConfirmation">Delete</button>
+            </div>
+          </div>
         </div>
-
       </div>
     </div>
   </div>
-</div>
+
+  <!-- Edit Egg Tray Modal -->
+  <div class="modal fade show" tabindex="-1" role="dialog" id="TrayModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Egg Tray</h5>
+          <!-- <button type="button" class="close" @click="closeEditModal"> -->
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            <!-- <span>&times;</span> -->
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="ui form" @submit.prevent="editEggTrayDetails">
+            <!-- Edit Egg Tray form content -->
+            <div class="fields">
+              <div class="eight wide field">
+                <label for="editType">Type:</label>
+                <input type="text" id="editType" name="editType" v-model="eggTray.type" required>
+              </div>
+              <div class="eight wide field">
+                <label for="editPrice">Price:</label>
+                <input type="number" id="editPrice" name="editPrice" step="0.01" v-model="eggTray.price" required>
+              </div>
+            </div>
+            <div class="ui center aligned padded grid">
+              <div class="row">
+                <div class="column">
+                  <button type="submit" class="ui primary button">Save</button>
+                </div>
+              </div>
+            </div>
+            
+          </form>
+          
+        </div>
+      </div>
+    </div>
+  </div>
 
 </div>
 
-  
-  
-</div>
 <script src="https://cdn.jsdelivr.net/npm/axios@0.24.0/dist/axios.min.js"></script>
-
 <script type="module" src="/js/trayapp.js"></script>
+
 <%- include('./partials/footer.ejs') -%>
