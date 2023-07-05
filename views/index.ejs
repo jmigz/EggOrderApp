@@ -3,14 +3,17 @@
 <div id="app" class="container-fluid px-0 mb-5 pb-5  ">
   <section class="eggorderform bg-dark pb-4 text-light ">
    
-  
   <div class="ui stackable grid center aligned pt-4">
+
+    <div class="sixteen wide center aligned column">
     <div v-if="!showSection" class=" center px-3">
       <div class="content ">
         <button class="ui green button" @click="showSection = true">New Order</button>
       </div>
     </div>
-    <div class="sixteen wide mobile twelve wide tablet five wide computer center aligned column">
+    </div>  
+   
+    <div v-if="showSection" class="sixteen wide mobile twelve wide tablet five wide computer center aligned column">
       <div v-if="showSection" class="card center px-3">
         <div class="content pt-2">
           <button class="circular ui icon basic teal button" @click="showSection = false">
@@ -73,8 +76,8 @@
       </div>
     
 
-      <div class="sixteen wide mobile eight wide tablet five wide computer center aligned column">
-        <div class="ui card px-3">
+      <div class="sixteen wide mobile ten wide tablet seven wide computer center aligned column">
+        <div class="ui card px-1">
           <div class="tab-content"> 
             <div id="colhead" class="ui header blue pt-3 ">Collection Summary</div>
             <div class="ui divider"></div>
@@ -91,7 +94,7 @@
               <tbody>
                 <tr v-for="(order, index) in calculateAmountOwing" :key="order.name" :class="{'bg-dark': index % 2 === 0, 'text-light': index % 2 === 0, 'rounded-row': true}">
                   <td>{{ index + 1 }}</td>
-                  <td>{{ order.name }}</td>
+                  <td>{{ order.name }} <br> <p class="ui label pointing above mini">{{order.dept}}</p></td>
                   <td>{{ formatPrice(order.orderTotal) }}</td>
                   <td>{{ formatPrice(order.amountOwing) }}</td>
                   <td>
@@ -111,8 +114,8 @@
         </div>
       </div>
 
-      <div class="sixteen wide mobile eight wide tablet five wide computer center aligned column">
-        <div class="ui card px-3 ">
+      <div class="sixteen wide mobile eight wide tablet seven wide computer center aligned column">
+        <div class="ui card px-1 ">
           <div class="tab-content"> 
             <div id="colhead" class="ui header blue pt-3 ">Pending Delivery</div>
             <div class="ui divider"></div>
@@ -128,7 +131,7 @@
               <tbody>
                 <tr v-for="(order, index) in getPendingDelivery" :key="order.name" :class="{'bg-dark': index % 2 === 0, 'text-light': index % 2 === 0, 'rounded-row': true}">
                   <td>{{ index + 1 }}</td>
-                  <td>{{ order.name }}</td>
+                  <td>{{ order.name }} <br> <p class="ui label pointing above mini">{{order.dept}}</p></td>
                   <td>{{ formatPrice(order.orderTotal) }}</td>
                   
                   <td>
@@ -217,7 +220,7 @@
       <form class="ui form" @submit.prevent="submitPayment">
         <div class="field">
           <label for="amountPaid">Amount Paid:</label>
-          <input type="number" id="amountPaid" v-model="amountPaid" min="-100" :max="orderTotal" step="1" required>
+          <input type="number" id="amountPaid" v-model="amountPaid" min="-0" :max="orderTotal" step="1" required>
           <p v-if="amountPaid > orderTotal" class="error">Amount paid cannot exceed the order total.</p>
         </div>
         <div class="ui center aligned padded grid ">

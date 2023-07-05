@@ -40,6 +40,7 @@ const app = Vue.createApp({
         .map((order) => ({
           id: order.id,
           name: order.name,
+          dept:order.dept,
           amountOwing: order.balance,
           orderTotal: order.total,
         }));
@@ -49,6 +50,7 @@ const app = Vue.createApp({
         .map((order) => ({
           id: order.id,
           name: order.name,
+          dept:order.dept,
           orderTotal: order.total,
         }));
     },
@@ -207,11 +209,11 @@ const app = Vue.createApp({
       }
     
       // Send a POST request to update the order in the database
-      console.log(this.order);
+      
       axios
         .put(`/pay`, { order: this.order }) // Send the order object in the request body
         .then(response => {
-        console.log('Order updated successfully.');
+       
         })
           .catch(error => {
             console.error('Error updating order:', error);

@@ -274,6 +274,7 @@ app.post('/create', async (req, res) => {
       quantity,
       price,
       total,
+      balance,
       delivered,
       paid,
       paidAt: paid ? new Date() : null,

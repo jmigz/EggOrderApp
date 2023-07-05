@@ -14,7 +14,9 @@ async function updateOrders() {
   
       // Update the balance for each order
       for (const order of orders) {
+        if (order.balance= null){
         order.balance = order.total;
+        }
         await order.save();
       }
   
