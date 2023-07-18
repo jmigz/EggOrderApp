@@ -1,13 +1,12 @@
-// RegisterScreen.js
+// RegistrationScreen.js
 import React, { useState } from 'react';
-import {TouchableOpacity, Text, View } from 'react-native';
+import {TouchableOpacity,Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
 import styles from '../theme/styles';
 import Button from '../components/atoms/Button';
-import Input from '../components/atoms/Input';
+import { Input } from '../components/atoms/Input';
 
-const RegisterScreen = () => {
+const RegistrationScreen = () => {
   const navigation = useNavigation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -50,7 +49,7 @@ const RegisterScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.logo}>DFF Eggs</Text>
-      <Text style={styles.title}>Signup</Text>
+      <Text style={styles.title}>Registration</Text>
 
       <View style={styles.inputView}>
         <Input
@@ -81,7 +80,7 @@ const RegisterScreen = () => {
   );
 };
 
-RegisterScreen.navigationOptions = ({ navigation }) => ({
+RegistrationScreen.navigationOptions = ({ navigation }) => ({
   headerLeft: () => (
     <TouchableOpacity onPress={() => navigation.goBack()}>
       <Ionicons name="arrow-back" size={24} color="black" />
@@ -89,4 +88,4 @@ RegisterScreen.navigationOptions = ({ navigation }) => ({
   ),
 });
 
-export default RegisterScreen;
+export default RegistrationScreen;
